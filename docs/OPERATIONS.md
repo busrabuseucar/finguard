@@ -4,7 +4,7 @@ Son inceleme: **16 Ekim 2026**. Bu belge kurulum, veri akışı, sürüm kapıla
 
 ## Sürüm kanıtı
 
-- Denetlenen uygulama commit’i: `0652a93d94d264c3f798a5bb2474764624d8a697`.
+- Denetlenen uygulama commit’i: `a5663fc7cb24243d7ccbacb90840c85994773db7`.
 - [Bu commit için başarılı CI kaydı](https://github.com/busrabuseucar/finguard/actions/runs/38894973350).
 - Doğrulanan otomatik kapsam: 29 backend + 6 tarayıcı testi.
 - Testlerin gerçek servis, veri veya donanım yerine taklit kullandığı noktalar aşağıda açıkça ayrılmıştır.
