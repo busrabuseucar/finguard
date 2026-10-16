@@ -29,11 +29,3 @@ Bir süreçte 10 istek/dakika ve 4 eşzamanlı işlem sınırı maliyet ve kayna
 Demo sabit bir fixture'dır, başka metni reddeder ve API anahtarına ihtiyaç duymaz. Bu sayede inceleyen kişi kurulum ve arayüzü deneyebilir; sabit çıktı canlı analiz gibi sunulmaz.
 
 Otomatik test başarısı yazılım sözleşmesinin kontrolüdür. Sahte/gerçek mesajlardan oluşan bağımsız etiketli test kümesi bulunmadığı için model doğruluk iddiası yapılmaz. Sonraki adım: veri kökeni, yanlış pozitif/negatif maliyeti, prompt injection örnekleri ve model sürümü kayıtlı bir değerlendirme seti.
-
-## Mülakatta gösterilecek akış
-
-1. Temiz kurulum ve demo örneği.
-2. Farklı metinde demo reddi; başarısızlıkta puan oluşmaması.
-3. Bozuk reasons türünü yakalayan test.
-4. Anahtarın frontend paketine girmediği mimari.
-5. Gerçek Gemini doğrulamasının ve sınıflandırma benchmark'ının ayrı açık işler olduğu.

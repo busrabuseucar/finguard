@@ -87,6 +87,6 @@ npm run test:e2e
 
 Bağımlılıklar sürüm ve package-lock.json ile sabitlenmiştir. CI Node 22/24 üzerinde npm ci, testler, build ve tarayıcı testlerini çalıştırır.
 
-[Teknik kararlar ve mülakat notları](docs/INTERVIEW.md) · [Önceki video demosu](https://youtu.be/V3h4kIcDiKU)
+[Teknik Tasarım ve Kararlar](docs/TECHNICAL_DESIGN.md) · [Önceki video demosu](https://youtu.be/V3h4kIcDiKU)
 
 Gemini REST sözleşmesi: [resmî API referansı](https://ai.google.dev/api/generate-content). Canlı entegrasyon hesabındaki model ve kota ile ayrıca doğrulanmalıdır.
