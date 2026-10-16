@@ -13,7 +13,7 @@ Metin, backend üzerinden Gemini'ye gönderilir; gelen yapılandırılmış yan�
 Node.js 22.12+ (22 veya 24 LTS) ve npm:
 
 ~~~bash
-git clone https://github.com/busrabuseucar/finguard-ai.git
+git clone https://github.com/busrabuseucar/finguard.git
 cd finguard-ai
 npm ci
 npm run build
@@ -90,3 +90,7 @@ Bağımlılıklar sürüm ve package-lock.json ile sabitlenmiştir. CI Node 22/2
 [Teknik Tasarım ve Kararlar](docs/TECHNICAL_DESIGN.md) · [Önceki video demosu](https://youtu.be/V3h4kIcDiKU)
 
 Gemini REST sözleşmesi: [resmî API referansı](https://ai.google.dev/api/generate-content). Canlı entegrasyon hesabındaki model ve kota ile ayrıca doğrulanmalıdır.
+
+## İşletim
+
+[İşletim ve sürüm doğrulama](docs/OPERATIONS.md) — kurulum, veri saklama, yayın, geri dönüş ve doğrulama kapsamı.
