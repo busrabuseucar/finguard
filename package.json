@@ -1,18 +1,29 @@
 {
-  "name": "finguard-ai-frontend",
-  "version": "1.0.0",
+  "name": "finguard-ai",
+  "version": "1.1.0",
+  "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite --host 127.0.0.1",
+    "server": "node --env-file-if-exists=.env src/server.js",
+    "demo": "node src/server.js --demo",
     "build": "vite build",
-    "preview": "vite preview"
+    "start": "node --env-file-if-exists=.env src/server.js --serve",
+    "preview": "vite preview",
+    "test": "node --test tests/*.test.js",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "lucide-react": "latest"
+    "express": "5.3.0",
+    "lucide-react": "1.58.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "playwright": "1.58.2",
+    "vite": "8.3.4"
+  }
 }

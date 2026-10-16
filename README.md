@@ -1,179 +1,92 @@
 # FinGuard AI
 
-AI Security • Fraud Detection • Turkish Scam Intelligence
+Türkçe finans ve e-ticaret mesajlarındaki dolandırıcılık sinyallerini açıklamalarıyla gösteren React + Express prototipi. BTK Hackathon 2026 sırasında prototiplenmiştir.
 
-FinGuard AI is an AI-powered financial phishing and fraud detection prototype focused on Turkish digital scam scenarios.
+Metin, backend üzerinden Gemini'ye gönderilir; gelen yapılandırılmış yanıt uygulama tarafından doğrulanır. Hatalı veya eksik yanıt için risk skoru üretilmez.
 
-Originally prototyped during BTK Hackathon 2026.
-## Product Preview
+Önceki prototipin ekran görüntüsü (güncel demo uyarıları bu eski görselde yer almıyor):
 
-![FinGuard AI Dashboard](./finguard-ai-dashboard-screenshot.png)
+![FinGuard önceki prototip ekranı](./finguard-ai-dashboard-screenshot.png)
 
-FinGuard AI analyzes suspicious Turkish financial messages and generates structured AI-powered fraud risk assessments.
----
+## Anahtarsız inceleme
 
-## Problem
+Node.js 22.12+ (22 veya 24 LTS) ve npm:
 
-Digital users are frequently exposed to:
+~~~bash
+git clone https://github.com/busrabuseucar/finguard-ai.git
+cd finguard-ai
+npm ci
+npm run build
+npm run demo
+~~~
 
-- fake payment links
-- phishing messages
-- fraudulent e-commerce campaigns
-- fake cargo / delivery notifications
-- social engineering attempts
+http://127.0.0.1:5000 adresini aç. **Örnek Mesajı Doldur → Analiz Et** adımlarını kullan.
 
-Most users cannot quickly identify whether a message is safe or risky.
+Demo yalnızca depodaki tek sabit örneği gösterir. Model çağrısı yapmaz; başka metinleri analiz etmez. Ekranda ve API yanıtında açıkça demo olarak işaretlenir. Örnek puanlar elle hazırlanmıştır; ölçülmüş doğruluk sonucu değildir.
 
----
+## Canlı Gemini analizi
 
-## Why It Matters
+.env.example dosyasını .env olarak kopyala:
 
-Financial phishing and e-commerce scams are rapidly increasing in Türkiye.
+~~~dotenv
+GEMINI_API_KEY=kendi_anahtarin
+GEMINI_MODEL=hesabinda_erisilebilir_model_adi
+PORT=5000
+HOST=127.0.0.1
+~~~
 
-Many users cannot distinguish fraudulent messages from legitimate notifications, especially when exposed to urgency-based manipulation tactics.
+GEMINI_MODEL için hesabında erişebildiğin, generateContent ve yapılandırılmış JSON çıktısını destekleyen modelin gerçek adını yaz. Eski kodda sabitlenen model adına bağımlı değildir. Anahtarı hiçbir zaman VITE_ değişkenine koyma veya Git'e ekleme.
 
-FinGuard AI helps users identify risky financial communication before financial damage occurs.
+~~~bash
+npm run build
+npm start
+~~~
 
-## What Makes FinGuard AI Different?
+Arayüz canlı modda metnin Google Gemini'ye gönderileceğini belirtir ve gönderim öncesi kullanıcı onayı ister. Şifre, kart numarası ve kişisel veri girilmemelidir. Uygulama metni diske kaydetmez veya loglamaz; sağlayıcının veri işleme koşulları ayrıca geçerlidir.
 
-Unlike generic phishing detectors, FinGuard AI focuses on Turkish financial fraud patterns, urgency-based manipulation tactics and localized scam language commonly used in Türkiye.
+Geliştirmede iki terminal: npm run server ve npm run dev. Vite /api isteklerini yerel backend'e yönlendirir. Standart portu değiştirirsen vite.config.js içindeki proxy hedefini de güncelle. npm run preview yalnızca statik önizlemedir; tam uygulama için npm start kullan.
 
-## Solution
+## Çıktı ve sınırlar
 
-FinGuard AI helps users analyze suspicious content before they click.
+| Alan | Anlamı |
+|---|---|
+| riskScore | 0–100 arasında modelin sezgisel değerlendirmesi |
+| riskLevel | Sunucunun skordan türettiği seviye: 0–34 Düşük, 35–59 Orta, 60–79 Yüksek, 80–100 Kritik |
+| threatType / summary | Şüphe türü ve kısa açıklama |
+| reasons / redFlags | Metinsel gerekçeler ve işaretler; string dizileri |
+| recommendedAction | Önerilen doğrulama adımı |
+| confidence | Modelin bildirdiği, kalibre edilmemiş güven puanı |
+| mode | demo veya live |
 
-The system takes a suspicious message as input and returns:
+Bağlantılar açılmaz, hedef siteler taranmaz, alan adı itibarı kontrol edilmez. Düşük skor güvenli site/mesaj garantisi değildir. Prompt injection için talimat ve kullanıcı verisi ayrılmıştır; bu, modelin manipüle edilemeyeceğini garanti etmez. Bağımsız etiketli veriyle ölçülmüş doğruluk, precision/recall veya finansal kaybı önleme iddiası yoktur.
 
-- risk score
-- threat category
-- suspicious indicators
-- explanation
-- recommended security action
+## API
 
----
+- GET /api/health: süreç durumu, mod ve yapılandırma varlığı. API anahtarının geçerliliğini veya sağlayıcı erişimini kanıtlamaz.
+- POST /api/analyze: application/json gövdesi, örneğin {"text":"İncelenecek mesaj"}.
+- Metin 5–5000 karakter; gövde 32 KiB; sağlayıcı zaman aşımı 20 saniye.
+- Süreç başına dakikada 10 analiz isteği; aynı anda en fazla 4 işlem. Limiti aşanlara 429/503.
+- Geçersiz girdi 400; yapılandırma eksikliği 503; bozuk/engellenmiş sağlayıcı cevabı 502; zaman aşımı 504.
+- Hatalarda risk puanı, ham model çıktısı ve sağlayıcı hata ayrıntıları döndürülmez.
 
-## Core Features
+Varsayılan dinleme adresi yalnızca yerel bilgisayardır. Bu sürümde hesap/oturum sistemi yoktur. İnternete açık canlı servis için kimlik doğrulama, TLS, kullanıcı kotası, paylaşımlı hız sınırı ve harcama kontrolü gerekir. Mevcut süreç bazlı sınır birden fazla sunucu arasında paylaşılmaz.
 
-- AI-powered phishing analysis
-- Financial fraud detection
-- E-commerce scam detection
-- Risk scoring system
-- Threat category classification
-- Security recommendation output
-- Gemini API integration
-- Localized Turkish scam pattern analysis
+## Testler
 
----
+~~~bash
+npm test
+npm run build
+npx playwright install chromium
+npm run test:e2e
+~~~
 
-## Real Scam Scenarios Tested
+- Node testleri gerçek yerel HTTP sunucusunda girdi/çıktı sözleşmesi, hata gizliliği, oran/eşzamanlılık sınırı ve demo ayrımını kontrol eder.
+- Sağlayıcı testleri Gemini HTTP yanıtlarını taklit eder: geçerli, bozuk, engellenmiş, kesilmiş ve zaman aşımı.
+- Playwright masaüstü/mobilde gerçek demo backend'ini, eski sonuç temizliğini, hatalı yanıtı ve taklit canlı sonuçta onay akışını kontrol eder.
+- Testler Gemini anahtarı kullanmaz; canlı model kalitesini veya gerçek sağlayıcı bağlantısını doğrulamaz.
 
-FinGuard AI was tested against realistic Turkish phishing and financial fraud scenarios including:
+Bağımlılıklar sürüm ve package-lock.json ile sabitlenmiştir. CI Node 22/24 üzerinde npm ci, testler, build ve tarayıcı testlerini çalıştırır.
 
-- Fake cargo delivery notifications
-- Marketplace payment scams
-- Fraudulent IBAN transfer requests
-- Fake banking verification messages
-- Social engineering payment pressure attacks
-- E-commerce refund scams
-- Papara / bank account suspension messages
+[Teknik kararlar ve mülakat notları](docs/INTERVIEW.md) · [Önceki video demosu](https://youtu.be/V3h4kIcDiKU)
 
-The system analyzes linguistic manipulation patterns, urgency indicators, suspicious financial requests and phishing intent signals.
-## How It Works
-
-1. User submits a suspicious financial message.
-2. Backend processes the request securely.
-3. AI analysis engine evaluates phishing indicators and scam patterns.
-4. System generates structured threat classification.
-5. Frontend dashboard visualizes the security analysis.
-
----
-
-## Example Output
-```json
-{
-  "riskScore": 92,
-  "riskLevel": "HIGH",
-  "threatType": "Financial Phishing",
-  "detectedIndicators": [
-    "Urgent payment pressure",
-    "Suspicious shortened link",
-    "Fake cargo notification"
-  ],
-  "recommendedAction": "Do not click the link. Verify through the official platform."
-}
-```
-
-## Real Scam Scenarios Tested
-
-FinGuard AI was tested against realistic Turkish phishing and financial fraud scenarios including:
-
-- Fake cargo delivery notifications
-- Marketplace payment scams
-- Fraudulent IBAN transfer requests
-- Fake banking verification messages
-- Social engineering payment pressure attacks
-- E-commerce refund scams
-- Papara / bank account suspension messages
-
-The system analyzes linguistic manipulation patterns, urgency indicators, suspicious financial requests and phishing intent signals.
-
----
-
-## Live Demo
-
-GitHub Repository:
-https://github.com/busrabuseucar/finguard-ai
-
-Video Demo:
-https://youtu.be/V3h4kIcDiKU
-
----
-
-## Tech Stack
-
-Frontend:
-- React
-- HTML
-- CSS
-
-Backend:
-- Node.js
-- Express.js
-
-AI/NLP:
-- Gemini API
-- Prompt-based threat analysis
-
----
-
-## Project Architecture
-
-User Input
-   ↓
-Backend API
-   ↓
-AI Threat Analysis Engine
-   ↓
-Structured Risk Classification
-   ↓
-Frontend Security Dashboard
-
----
-
-## Future Improvements
-
-- Turkish NLP fraud dataset integration
-- Real-time scam intelligence feeds
-- Browser extension support
-- Mobile application
-- Advanced fraud analytics dashboard
-- Threat intelligence scoring engine
-  ### Example Recommendation
-
-FinGuard AI warns users before interacting with suspicious financial content.
-
-Example system warning:
-
-"Do not click suspicious financial links. Always verify payment or account requests through official platforms."
-  "recommendation": "Do not click the link. Verify the message through the official service."
-}
+Gemini REST sözleşmesi: [resmî API referansı](https://ai.google.dev/api/generate-content). Canlı entegrasyon hesabındaki model ve kota ile ayrıca doğrulanmalıdır.
